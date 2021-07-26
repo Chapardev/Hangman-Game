@@ -5,22 +5,33 @@ Game::Game()
       m_secretWord { "GANGE" }, m_attemptsMax { 10 },
       m_word(m_secretWord.size(), '_'), m_attempts { m_attemptsMax },
       m_font { "../assets/fonts/SF Atarian System.ttf" },
+      m_attemptsText { "Attempts: " + std::to_string(m_attempts), m_font, 24 },
       m_wordText { m_word, m_font, 50 },
-      m_attemptsText { "Attempts: " + std::to_string(m_attempts), m_font, 24 }
-      // m_informationText { "Press on a letter" }
+      m_underscoresText { m_wordText },
+      m_informationText { "Press on a letter", m_font, 30 }
 {
-    // TODO: Publish this first version on Github
-    // TODO: Updates information text ("Enter a letter", "You already entered that letter!", "You won", "You lost")
-
 	m_window.setResizable(false);
     m_renderer.clear(gf::Color::Black);
 
-    m_wordText.setLetterSpacing(10.f);
-    m_wordText.setPosition((m_window.getSize() - m_wordText.getLocalBounds().getSize()) / 2.f);
-    m_wordText.setColor(gf::Color::White);
-    
-    m_attemptsText.setPosition({ 10.f, m_attemptsText.getCharacterSize() + 5.f });
+    m_attemptsText.setPosition( { 15.f, m_attemptsText.getCharacterSize() + 10.f } );
     m_attemptsText.setColor(gf::Color::White);
+
+    m_wordText.setLetterSpacing(10.f);
+    m_wordText.setPosition(
+        { (m_window.getSize().x - m_wordText.getLocalBounds().getSize().x) / 2.f,
+        (m_window.getSize().y - m_wordText.getLocalBounds().getSize().y) * 0.7f }
+    );
+    m_wordText.setColor(gf::Color::White);
+
+    m_underscoresText.setLetterSpacing(m_wordText.getLetterSpacing());
+    m_underscoresText.setPosition( { m_wordText.getPosition().x + 3.f, m_wordText.getPosition().y } );
+    m_underscoresText.setColor(gf::Color::White);
+    
+    m_informationText.setPosition(
+        { (m_window.getSize().x - m_informationText.getLocalBounds().getSize().x) / 2.f, 
+        m_wordText.getPosition().y + m_wordText.getCharacterSize() + m_informationText.getCharacterSize() }
+    );
+    m_informationText.setColor(gf::Color::White);
 }
 
 void Game::checkLetter(char letter)
@@ -35,6 +46,18 @@ void Game::checkLetter(char letter)
     
     m_attempts--;
     m_attemptsText.setString("Attempts: " + std::to_string(m_attempts));
+}
+
+void Game::changeInformationText(const std::string &newText)
+{
+    if (m_informationText.getString() != newText)
+    {
+        m_informationText.setString(newText);
+        m_informationText.setPosition(
+            { (m_window.getSize().x - m_informationText.getLocalBounds().getSize().x) / 2, 
+            m_wordText.getPosition().y + m_wordText.getCharacterSize() + m_informationText.getCharacterSize() }
+        );
+    }
 }
 
 void Game::pollEvents()
@@ -62,10 +85,11 @@ void Game::pollEvents()
                         {
                             if (m_usedLetters.find(keyName[0]) != std::string::npos)
                             {
-                                std::cout << "You already entered that letter!\n";
+                                this->changeInformationText("You already entered that letter!");
                             }
                             else
                             {
+                                this->changeInformationText("Press on a letter");
                                 this->checkLetter(keyName[0]);
                                 m_usedLetters += keyName[0];
                             }
@@ -97,21 +121,24 @@ void Game::render()
 
     m_renderer.draw(m_attemptsText);
     m_renderer.draw(m_wordText);
+    m_renderer.draw(m_underscoresText);
+    m_renderer.draw(m_informationText);
 
     m_renderer.display();
 }
 
 void Game::renderGameOverScreen(const std::string &text)
 {
-    m_wordText.setString(text);
-    m_wordText.setPosition((m_window.getSize() - m_wordText.getLocalBounds().getSize()) / 2.f);
+    m_informationText.setString(text);
+    m_informationText.setPosition(
+        { (m_window.getSize().x - m_informationText.getLocalBounds().getSize().x) / 2, 
+        m_wordText.getPosition().y + m_wordText.getCharacterSize() + m_informationText.getCharacterSize() }
+    );
 
     gf::Clock clock;
-    while (clock.getElapsedTime() < gf::seconds(1.5f)) 
+    while (clock.getElapsedTime() < gf::seconds(1.f)) 
     {
-        m_renderer.clear();
-        m_renderer.draw(m_wordText);
-        m_renderer.display();
+        this->render();
     }
 
     m_window.close();
@@ -128,10 +155,10 @@ void Game::run()
 
     if (m_word == m_secretWord)
     {
-        this->renderGameOverScreen("You won");
+        this->renderGameOverScreen("You won!");
     }
     else if (m_attempts == 0)
     {
-        this->renderGameOverScreen("You lost");
+        this->renderGameOverScreen("You lost!");
     }
 }

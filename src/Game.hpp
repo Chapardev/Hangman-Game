@@ -9,6 +9,7 @@ public:
 	Game();
 
 	void checkLetter(char letter);
+	void changeInformationText(const std::string &newText);
 
 	void pollEvents();
 	void update();
@@ -32,9 +33,10 @@ private:
     int m_attempts;
 
 	gf::Font m_font;
-	gf::Text m_wordText;
 	gf::Text m_attemptsText;
-	// gf::Text m_informationText;
+	gf::Text m_wordText;
+	gf::Text m_underscoresText;
+	gf::Text m_informationText;
 };
 
 #endif // SRC_GAME_HPP
