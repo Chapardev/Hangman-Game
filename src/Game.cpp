@@ -1,5 +1,28 @@
 #include "Game.hpp"
 
+std::string Game::_getRandomWord()
+{
+    std::ifstream ifs("../assets/data/words.data");
+    ifs.unsetf(std::ios_base::skipws);
+    gf::Random random;
+    unsigned long long numberOfLines { 
+        random.computeUniformInteger(
+            1ull, static_cast<unsigned long long>(std::count(std::istream_iterator<char>(ifs), std::istream_iterator<char>(), '\n'))
+        ) 
+    };
+
+    ifs.close();
+    ifs.open("../assets/data/words.data");
+    
+    std::string result { std::move(m_secretWord) };
+    for (unsigned long long i { 0 }; i < numberOfLines; i++)
+    {
+        std::getline(ifs, result);
+    }
+
+    return result;
+}
+
 void Game::_initTexts()
 {
     m_texts["word"] = gf::Text { m_word, m_font, 50 };
@@ -30,14 +53,11 @@ void Game::_initSprites()
 
 Game::Game()
     : m_window { "GF Hangman", { 800, 600 } }, m_renderer { m_window },
-      m_attemptsMax { 10 }, m_attempts { m_attemptsMax },
-      m_font { "../assets/fonts/SF Atarian System.ttf" }
+      m_font { "../assets/fonts/SF Atarian System.ttf" },
+      m_secretWord { this->_getRandomWord() },
+      m_word(m_secretWord.size(), '_'),
+      m_attemptsMax { 10 }, m_attempts { m_attemptsMax }
 {
-    std::ifstream ifs("../assets/data/words.data");
-    std::getline(ifs, m_secretWord);
-
-    m_word = std::string(m_secretWord.size(), '_');
-
 	m_window.setResizable(false);
     m_renderer.clear(gf::Color::Black);
 
@@ -57,7 +77,6 @@ void Game::checkLetter(char letter)
     else
     {
         m_attempts--;
-        
         m_sprites["hangman"].setTexture(
             m_textures.at("hangman"), 
             gf::RectF::fromPositionSize({ 1.f / 11.f * m_attempts, 0.f }, { 1.f / 11.f, 1.f })
