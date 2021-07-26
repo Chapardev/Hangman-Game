@@ -32,6 +32,9 @@ private:
 	std::string m_word;
     int m_attempts;
 
+	gf::Texture m_blackboardTexture;
+	gf::Sprite m_blackboardSprite;
+
 	gf::Font m_font;
 	gf::Text m_attemptsText;
 	gf::Text m_wordText;

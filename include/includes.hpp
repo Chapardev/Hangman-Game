@@ -6,6 +6,7 @@
 #include <gf/Event.h>
 #include <gf/Font.h>
 #include <gf/RenderWindow.h>
+#include <gf/Sprite.h>
 #include <gf/Text.h>
 #include <gf/Window.h>
 

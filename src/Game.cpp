@@ -4,6 +4,8 @@ Game::Game()
     : m_window { "GF Hangman", { 800, 600 } }, m_renderer { m_window },
       m_secretWord { "GANGE" }, m_attemptsMax { 10 },
       m_word(m_secretWord.size(), '_'), m_attempts { m_attemptsMax },
+      m_blackboardTexture { "../assets/images/blackboard.jpg" },
+      m_blackboardSprite { m_blackboardTexture },
       m_font { "../assets/fonts/SF Atarian System.ttf" },
       m_attemptsText { "Attempts: " + std::to_string(m_attempts), m_font, 24 },
       m_wordText { m_word, m_font, 50 },
@@ -119,6 +121,8 @@ void Game::render()
 {
     m_renderer.clear();
 
+    m_renderer.draw(m_blackboardSprite);
+
     m_renderer.draw(m_attemptsText);
     m_renderer.draw(m_wordText);
     m_renderer.draw(m_underscoresText);
@@ -149,7 +153,6 @@ void Game::run()
     while (m_window.isOpen() && (m_word != m_secretWord) && (m_attempts > 0))
     {
         this->update();
-
         this->render();
     }
 
