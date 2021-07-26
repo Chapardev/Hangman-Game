@@ -5,6 +5,10 @@
 
 class Game
 {
+private:
+	void _initTexts();
+	void _initSprites();
+
 public:
 	Game();
 
@@ -32,14 +36,11 @@ private:
 	std::string m_word;
     int m_attempts;
 
-	gf::Texture m_blackboardTexture;
-	gf::Sprite m_blackboardSprite;
+	std::map<std::string, gf::Texture> m_textures;
+	std::map<std::string, gf::Sprite> m_sprites;
 
 	gf::Font m_font;
-	gf::Text m_attemptsText;
-	gf::Text m_wordText;
-	gf::Text m_underscoresText;
-	gf::Text m_informationText;
+	std::map<std::string, gf::Text> m_texts;
 };
 
 #endif // SRC_GAME_HPP
