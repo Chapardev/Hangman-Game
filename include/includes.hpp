@@ -12,7 +12,7 @@
 #include <gf/Window.h>
 
 // STL
-#include <cstring>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <string>

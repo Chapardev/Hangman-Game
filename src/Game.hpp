@@ -29,8 +29,8 @@ private:
 	gf::RenderWindow m_renderer;
 
 	// Game logic variables
-	const std::string m_secretWord;
     const int m_attemptsMax;
+	std::string m_secretWord;
 
 	std::string m_usedLetters;
 	std::string m_word;
